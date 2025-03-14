@@ -24,6 +24,11 @@ mongoose
 app.use("/api/patient", patientRoutes);
 app.use("/api/insurer", insurerRoutes);
 
+app.get("/", (req, res) => {
+  res.send("API is running...");
+});
+
+
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
