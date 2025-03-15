@@ -21,14 +21,16 @@ function PatientDashboard() {
   }, [user]);
 
   // Fetch user-specific claims
-  const fetchClaims = async () => {
-    try {
-      const response = await axios.get(`https://aarogya-qmzf.onrender.com/api/patient/claims/${user?.sub}`);
-      setClaims(response.data);
-    } catch (error) {
-      console.error("Error fetching claims:", error);
-    }
-  };
+ const fetchClaims = async () => {
+  try {
+    const encodedUserID = encodeURIComponent(user?.sub);  // Encode user ID
+    const response = await axios.get(`https://aarogya-qmzf.onrender.com/api/patient/claims/${encodedUserID}`);
+    setClaims(response.data);
+  } catch (error) {
+    console.error("Error fetching claims:", error);
+  }
+};
+
 
   // Handle role change
   const handleChangeRole = () => {
