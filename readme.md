@@ -64,16 +64,15 @@ npm install
 #### Configure Environment Variables
 Create a `.env` file in the `frontend` directory and add:
 ```
-REACT_APP_AUTH0_DOMAIN=your_auth0_domain
-REACT_APP_AUTH0_CLIENT_ID=your_auth0_client_id
-REACT_APP_API_URL=http://localhost:5000/api
+PORT=5000
+MONGO_URI=your_mongodb_connection_string
 ```
 
 #### Start the Frontend Server
 ```sh
 npm start
 ```
-The application will run on `http://localhost:3000`
+The application will run on `http://localhost:5000`
 
 ---
 
