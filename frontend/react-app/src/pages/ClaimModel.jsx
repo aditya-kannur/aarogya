@@ -14,7 +14,7 @@ function ClaimModel({ claim, onClose, onUpdate }) {
   // Handle updating the claim
   const handleUpdate = async () => {
     try {
-      const response = await axios.put(`http://localhost:5000/api/insurer/claims/${claim._id}`, {
+      const response = await axios.put(`https://aarogya-qmzf.onrender.com/api/insurer/claims/${claim._id}`, {
         approvedAmount,
         status,
         insurerComments,
@@ -96,13 +96,13 @@ function ClaimModel({ claim, onClose, onUpdate }) {
           <label><strong>Document:</strong></label>
           {isImage ? (
             <div className="document-preview">
-              <img src={`http://localhost:5000/${claim.documentPath}`} alt="Uploaded Document" />
-              <a href={`http://localhost:5000/${claim.documentPath}`} download className="download-btn">
+              <img src={`https://aarogya-qmzf.onrender.com/${claim.documentPath}`} alt="Uploaded Document" />
+              <a href={`https://aarogya-qmzf.onrender.com/${claim.documentPath}`} download className="download-btn">
                 Download Image
               </a>
             </div>
           ) : (
-            <a href={`http://localhost:5000/${claim.documentPath}`} target="_blank" rel="noopener noreferrer">
+            <a href={`https://aarogya-qmzf.onrender.com/${claim.documentPath}`} target="_blank" rel="noopener noreferrer">
               View Document
             </a>
           )}

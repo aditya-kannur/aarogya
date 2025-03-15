@@ -23,7 +23,7 @@ function PatientDashboard() {
   // Fetch user-specific claims
   const fetchClaims = async () => {
     try {
-      const response = await axios.get(`http://localhost:5000/api/patient/claims/${user?.sub}`);
+      const response = await axios.get(`https://aarogya-qmzf.onrender.com/api/patient/claims/${user?.sub}`);
       setClaims(response.data);
     } catch (error) {
       console.error("Error fetching claims:", error);

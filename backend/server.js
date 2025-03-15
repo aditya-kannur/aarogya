@@ -7,27 +7,32 @@ const insurerRoutes = require("./routes/insurer");
 
 const app = express();
 
+// CORS Middleware 
+app.use(
+  cors({
+    origin: "https://aarogya-lemon.vercel.app", // Your frontend URL
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true
+  })
+);
+
 // Middleware
-app.use(cors());
 app.use(express.json()); // Parse JSON
-app.use("/uploads", express.static("uploads")); // Serve uploaded files
-app.use(express.json());
+app.use("/uploads", express.static("uploads")); 
 
-
-// Connection to MongoDB
+//  MongoDB Connection
 mongoose
-  .connect(process.env.MONGO_URI)
+  .connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log("MongoDB Connected"))
   .catch((err) => console.error("MongoDB Connection Error:", err));
 
-// Use routes
+// Use Routes
 app.use("/api/patient", patientRoutes);
 app.use("/api/insurer", insurerRoutes);
 
 app.get("/", (req, res) => {
   res.send("API is running...");
 });
-
 
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
