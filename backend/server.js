@@ -10,9 +10,9 @@ const app = express();
 // CORS Middleware 
 app.use(
   cors({
-    origin: "https://aarogya-lemon.vercel.app", // Your frontend URL
+    origin: "https://aarogya-lemon.vercel.app",  // Allow frontend requests
     methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true
+    credentials: true,
   })
 );
 
