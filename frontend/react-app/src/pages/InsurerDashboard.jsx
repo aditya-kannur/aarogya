@@ -12,7 +12,7 @@ function InsurerDashboard() {
   const [selectedClaim, setSelectedClaim] = useState(null);
   const [filter, setFilter] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
-  const [showDropdown, setShowDropdown] = useState(false); 
+  const [showDropdown, setShowDropdown] = useState(false);
 
   useEffect(() => {
     fetchClaims();
@@ -32,6 +32,19 @@ function InsurerDashboard() {
   const toggleDropdown = () => {
     setShowDropdown((prev) => !prev);
   };
+
+  // 🔹 Filter + Search Logic
+  const filteredClaims = claims.filter((claim) => {
+    const matchesSearch = searchQuery
+      ? claim.name.toLowerCase().includes(searchQuery) ||
+        claim.status.toLowerCase().includes(searchQuery) ||
+        claim.amount.toString().includes(searchQuery)
+      : true;
+
+    const matchesFilter = filter === "All" || claim.status === filter;
+
+    return matchesSearch && matchesFilter;
+  });
 
   return (
     <div className="dashboard-container">
@@ -106,8 +119,8 @@ function InsurerDashboard() {
 
         {/* Claims List */}
         <div className="claims-section">
-          {claims.length > 0 ? (
-            claims.map((claim, index) => (
+          {filteredClaims.length > 0 ? (
+            filteredClaims.map((claim, index) => (
               <div key={claim._id} className="claim-tile" onClick={() => setSelectedClaim(claim)}>
                 <span className="col-no">{index + 1}</span>
                 <span className="col-name">{claim.name}</span>
