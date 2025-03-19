@@ -1,17 +1,16 @@
 {
-    "rewrites": [
-      {
-        "source": "/",
-        "has": [
-          { "type": "query", "key": "code" },
-          { "type": "query", "key": "state" }
-        ],
-        "destination": "/"
-      },
-      {
-        "source": "/(.*)",
-        "destination": "/"
-      }
-    ]
-  }
-  
+  "rewrites": [
+    {
+      "source": "/",
+      "has": [
+        { "type": "query", "key": "code" },
+        { "type": "query", "key": "state" }
+      ],
+      "destination": "/"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/"
+    }
+  ]
+}
