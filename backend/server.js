@@ -8,13 +8,20 @@ const insurerRoutes = require("./routes/insurer");
 const app = express();
 
 // CORS Middleware 
-app.use(
-  cors({
-    origin: "https://aarogya-lemon.vercel.app",  // Allow frontend requests
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true,
-  })
-);
+// app.use(
+//   cors({
+//     origin: "https://aarogya-lemon.vercel.app",  // Allow frontend requests
+//     methods: ["GET", "POST", "PUT", "DELETE"],
+//     credentials: true,
+//   }),
+//   cors({
+//     origin: "http://localhost:5173",  // Allow frontend requests
+//     methods: ["GET", "POST", "PUT", "DELETE"],
+//     credentials: true,
+//   })
+// );
+
+app.use(cors());
 
 // Middleware
 app.use(express.json()); // Parse JSON
