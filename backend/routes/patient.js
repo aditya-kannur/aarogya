@@ -2,21 +2,11 @@ const express = require("express");
 const multer = require("multer");
 const Claim = require("../models/claim"); 
 const router = express.Router();
-
-// Multer for File Uploads
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "uploads/"); 
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + "-" + file.originalname); 
-  },
-});
-
-const upload = multer({ storage: storage });
+const cupload = require("../cloudinaryConfig");
 
 // POST route to submit a claim
-router.post("/submit", upload.single("document"), async (req, res) => {
+// used cloudinary upload middleware
+router.post("/submit",   cupload.single("document"), async (req, res) => {
   try {
     const { userID, role, name, email, amount, description } = req.body;
     const documentPath = req.file ? req.file.path : null; 

@@ -51,7 +51,7 @@ const ClaimForm = ({ onClose }) => {
     data.append("document", formData.document);
 
     try {
-      const response = await axios.post("https://aarogya-qmzf.onrender.com/api/patient/submit", data);
+      const response = await axios.post("http://localhost:5000/api/patient/submit", data);
       if (response.status === 201) {
         alert("Claim submitted successfully!");
         onClose();

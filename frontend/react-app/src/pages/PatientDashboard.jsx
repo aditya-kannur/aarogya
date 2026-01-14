@@ -24,7 +24,7 @@ function PatientDashboard() {
  const fetchClaims = async () => {
   try {
     const encodedUserID = encodeURIComponent(user?.sub);  // Encode user ID
-    const response = await axios.get(`https://aarogya-qmzf.onrender.com/api/patient/claims/${encodeURIComponent(user?.sub)}`);
+    const response = await axios.get(`http://localhost:5000/api/patient/claims/${encodeURIComponent(user?.sub)}`);
     setClaims(response.data);
   } catch (error) {
     console.error("Error fetching claims:", error);
@@ -134,6 +134,7 @@ function PatientDashboard() {
               {status}
             </button>
           ))}
+          
         </div>
 
         {/* Claims Table Header */}
