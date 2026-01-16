@@ -17,14 +17,14 @@ const Roles = () => {
     if (!isAuthenticated) {
       loginWithRedirect(); 
     } else if (savedRole) {
-      navigate(savedRole === "Patient" ? "/patient-dashboard" : "/insurer-dashboard");
+      navigate(savedRole === "Patient" ? "/patient-dashboard" : "/users");
     }
   }, [isAuthenticated, navigate, loginWithRedirect]);
 
   const handleContinue = () => {
     if (!selectedRole) return; 
     localStorage.setItem("userRole", selectedRole);
-    navigate(selectedRole === "Patient" ? "/patient-dashboard" : "/insurer-dashboard");
+    navigate(selectedRole === "Patient" ? "/patient-dashboard" : "/users");
   };
 
   return (

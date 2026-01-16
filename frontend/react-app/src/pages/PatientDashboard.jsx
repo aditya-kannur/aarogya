@@ -23,8 +23,8 @@ function PatientDashboard() {
   // Fetch user-specific claims
  const fetchClaims = async () => {
   try {
-    const encodedUserID = encodeURIComponent(user?.sub);  // Encode user ID
-    const response = await axios.get(`http://localhost:5000/api/patient/claims/${encodeURIComponent(user?.sub)}`);
+    const encodedUserID = encodeURIComponent(user?.sub);  
+    const response = await axios.get(`http://localhost:5000/api/patient/claims/${encodedUserID}`);
     setClaims(response.data);
   } catch (error) {
     console.error("Error fetching claims:", error);

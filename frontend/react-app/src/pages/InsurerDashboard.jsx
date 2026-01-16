@@ -5,7 +5,8 @@ import axios from "axios";
 import ClaimModel from "./ClaimModel"; 
 import "./InsurerDashboard.css"; 
 
-function InsurerDashboard() {
+// 1. CRITICAL FIX: Add curly braces { userID } to destructure the prop
+function InsurerDashboard({ userID }) {
   const { user, logout } = useAuth0();
   const navigate = useNavigate();
   const [claims, setClaims] = useState([]);
@@ -15,13 +16,16 @@ function InsurerDashboard() {
   const [showDropdown, setShowDropdown] = useState(false);
 
   useEffect(() => {
-    fetchClaims();
-  }, []);
+    if(userID) {
+        fetchClaims();
+    }
+  }, [userID]);
 
-  // Fetch all claims
+  // Fetch user specific claims
   const fetchClaims = async () => {
     try {
-      const response = await axios.get("https://aarogya-qmzf.onrender.com/api/insurer/claims");
+      // 2. Updated URL to match your backend route: /claims/user/:userID
+      const response = await axios.get(`http://localhost:5000/api/insurer/claims/user/${userID}`);
       setClaims(response.data);
     } catch (error) {
       console.error("Error fetching claims:", error);
@@ -33,7 +37,7 @@ function InsurerDashboard() {
     setShowDropdown((prev) => !prev);
   };
 
-  // 🔹 Filter + Search Logic
+  // Filter + Search Logic
   const filteredClaims = claims.filter((claim) => {
     const matchesSearch = searchQuery
       ? claim.name.toLowerCase().includes(searchQuery) ||
@@ -50,6 +54,7 @@ function InsurerDashboard() {
     <div className="dashboard-container">
       <div className="sidebar">
         <div className="logo">
+           {/* Ensure path is correct for your project structure */}
           <img src="../../assets/logo.svg" alt="Logo" />
         </div>
         <div className="sidebar-icons">
@@ -71,7 +76,7 @@ function InsurerDashboard() {
         <div className="header">
           <div className="user-greeting">
             <h1>Hi, {user?.name}</h1>
-            <p>Welcome to your Insurer Dashboard</p>
+            <p>Viewing Claims for User ID: <strong>{userID}</strong></p>
           </div>
 
           {/* User Profile Dropdown */}
@@ -131,7 +136,7 @@ function InsurerDashboard() {
               </div>
             ))
           ) : (
-            <p className="no-claims">No claims found.</p>
+            <p className="no-claims">No claims found for this user.</p>
           )}
         </div>
 
