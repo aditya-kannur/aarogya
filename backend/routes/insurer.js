@@ -2,13 +2,26 @@ const express = require("express");
 const Claim = require("../models/claim"); 
 const router = express.Router();
 
-// GET route to fetch all claims 
-router.get("/claims", async (req, res) => {
+// Get unique User IDs
+router.get("/unique-users", async (req, res) => {
   try {
-    const claims = await Claim.find(); 
-    res.status(200).json(claims);
+    const userIDs = await Claim.distinct("userID");
+    res.status(200).json(userIDs);
   } catch (error) {
-    console.error("Error fetching claims:", error);
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// GET claims by SPECIFIC User ID
+// Note: Route is /claims/user/:userID
+router.get("/claims/user/:userID", async (req, res) => {
+  try {
+    const { userID } = req.params;
+    const userClaims = await Claim.find({ userID });
+    res.status(200).json(userClaims);
+  } catch (error) {
+    console.error(error);
     res.status(500).json({ message: "Server error" });
   }
 });
@@ -18,12 +31,10 @@ router.put("/claims/:id", async (req, res) => {
     try {
       const { status, approvedAmount, insurerComments } = req.body;
   
-      // Validate required fields
       if (!status || !approvedAmount || !insurerComments) {
         return res.status(400).json({ message: "All fields are required for updating the claim." });
       }
   
-      // Find and update the claim by ID
       const updatedClaim = await Claim.findByIdAndUpdate(
         req.params.id,
         { status, approvedAmount, insurerComments },
@@ -41,5 +52,4 @@ router.put("/claims/:id", async (req, res) => {
     }
   });
 
-  
 module.exports = router;

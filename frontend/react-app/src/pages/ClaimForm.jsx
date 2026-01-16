@@ -29,6 +29,7 @@ const ClaimForm = ({ onClose }) => {
     if (!formData.amount || formData.amount <= 0) newErrors.amount = "Enter a valid amount";
     if (!formData.description || formData.description.length < 10) newErrors.description = "Description must be at least 10 characters";
     if (!formData.document) newErrors.document = "File upload is required";
+    if (!user) newErrors.user = "User authentication failed";
     
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
