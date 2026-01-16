@@ -20,10 +20,11 @@ const Home = () => {
     }
   }, [isAuthenticated, navigate]);
 
-  // Handle login
-  const handleLogin = async () => {
-    await loginWithRedirect();
+  // Handle login with redirect to roles page
+const handleLogin = async () => {
+    await loginWithRedirect()   
   };
+
 
   return (
     <div>

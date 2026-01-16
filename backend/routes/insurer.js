@@ -1,6 +1,7 @@
 const express = require("express");
 const Claim = require("../models/claim"); 
 const router = express.Router();
+const InsurerDetails = require("../models/InsurerDetails");
 
 // Get unique User IDs
 router.get("/unique-users", async (req, res) => {
@@ -14,7 +15,6 @@ router.get("/unique-users", async (req, res) => {
 });
 
 // GET claims by SPECIFIC User ID
-// Note: Route is /claims/user/:userID
 router.get("/claims/user/:userID", async (req, res) => {
   try {
     const { userID } = req.params;
@@ -51,5 +51,31 @@ router.put("/claims/:id", async (req, res) => {
       res.status(500).json({ message: "Server error" });
     }
   });
+
+// Request authorization (with authId check)
+router.post("/request-authorization", async (req, res) => {
+  const { email, name, role, authId } = req.body;
+  if (!email || !name || !authId) {
+    return res.status(400).json({ message: "All fields required." });
+  }
+  if (authId !== process.env.INSURER_AUTH_ID) {
+    return res.status(401).json({ message: "Invalid Authorization ID." });
+  }
+  const exists = await InsurerDetails.findOne({ email });
+  if (exists) {
+    return res.status(409).json({ message: "Already authorized." });
+  }
+  const newInsurer = new InsurerDetails({ email, name, role });
+  await newInsurer.save();
+  res.status(201).json({ message: "Authorized." });
+});
+
+// Check if user is authorized
+router.post("/check-authorization", async (req, res) => {
+  const { email } = req.body;
+  const exists = await InsurerDetails.findOne({ email });
+  res.json({ authorized: !!exists });
+});
+
 
 module.exports = router;
