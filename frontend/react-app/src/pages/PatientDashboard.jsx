@@ -75,7 +75,6 @@ function PatientDashboard() {
           <button>Claims</button>
         </div>
         <div className="sidebar-footer">
-          <button onClick={handleChangeRole}>Change Role</button>
         </div>
       </div>
 

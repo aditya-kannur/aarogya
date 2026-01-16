@@ -11,7 +11,7 @@ const claimSchema = new mongoose.Schema({
     submissionDate: { type: Date, default: Date.now },
     approvedAmount: Number,
     insurerComments: String,
-    documentPath: { type: String }  // Stores the file path of the uploaded document
+    documentPath: { type: String } 
 });
 
 module.exports = mongoose.model("Claim", claimSchema);
