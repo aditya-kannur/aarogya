@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import { useAuth0 } from "@auth0/auth0-react";
 
@@ -6,46 +6,36 @@ const AuthzContext = createContext();
 
 export const AuthzProvider = ({ children }) => {
   const { user, isAuthenticated, isLoading } = useAuth0();
-  
   const [isInsurer, setIsInsurer] = useState(null);
   const [loadingAuthz, setLoadingAuthz] = useState(true);
 
-  useEffect(() => {
-    if (isLoading) return;
-
-    if (!isAuthenticated) {
-      setIsInsurer(false);
-      setLoadingAuthz(false); 
-      return;
+  const checkAuthorization = useCallback(async () => {
+    if (isLoading || !isAuthenticated || !user) {
+       if (!isLoading) setLoadingAuthz(false);
+       return;
     }
 
-    // check authorization only if user is logged in
-    const checkAuthorization = async () => {
-      try {
-        const res = await axios.post(
-          "http://localhost:5000/api/insurer/check-authorization",
-          { email: user.email }
-        );
-        setIsInsurer(res.data.authorized);
-      } catch (error) {
-        console.error("Authorization check failed", error);
-        setIsInsurer(false);
-      } finally {
-        // 4. API check is done, allow app to render
-        setLoadingAuthz(false);
-      }
-    };
+    setLoadingAuthz(true); 
+    try {
+      const res = await axios.post(
+        "http://localhost:5000/api/insurer/check-authorization",
+        { email: user.email }
+      );
+      setIsInsurer(res.data.authorized);
+    } catch (error) {
+      console.error("Auth check failed", error);
+      setIsInsurer(false);
+    } finally {
+      setLoadingAuthz(false);
+    }
+  }, [user, isAuthenticated, isLoading]);
 
+  useEffect(() => {
     checkAuthorization();
-  }, [isLoading, isAuthenticated, user]);
-
-  // blocking the render until Auth0 and your API are finished to debug the reload issue.
-  if (isLoading || loadingAuthz) {
-    return <div>Loading Authorization...</div>; 
-  }
+  }, [checkAuthorization]);
 
   return (
-    <AuthzContext.Provider value={{ isInsurer, loadingAuthz }}>
+    <AuthzContext.Provider value={{ isInsurer, loadingAuthz, refreshAuth: checkAuthorization }}>
       {children}
     </AuthzContext.Provider>
   );
