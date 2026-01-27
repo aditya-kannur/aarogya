@@ -22,15 +22,19 @@ function InsurerDashboard({ userID }) {
   }, [userID]);
 
   // Fetch user specific claims
-  const fetchClaims = async () => {
-    try {
-      // 2. Updated URL to match your backend route: /claims/user/:userID
-      const response = await axios.get(`http://localhost:5000/api/insurer/claims/user/${userID}`);
-      setClaims(response.data);
-    } catch (error) {
-      console.error("Error fetching claims:", error);
-    }
-  };
+const fetchClaims = async (userID) => {
+  try {
+    const res = await axios.get(
+      `http://localhost:5000/api/insurer/claims/user/${encodeURIComponent(userID)}`,
+      { headers: { "Cache-Control": "no-cache" } }
+    );
+    // axios throws on non-2xx, but guard in case response has no data
+    setClaims(res.data || []);
+  } catch (err) {
+    console.error("fetchClaims error:", err);
+    setClaims([]);
+  }
+};
 
   // Toggle dropdown menu
   const toggleDropdown = () => {

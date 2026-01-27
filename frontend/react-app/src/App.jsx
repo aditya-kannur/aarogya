@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Home from "./components/Home";
 import Roles from "./components/Roles";
@@ -10,7 +10,17 @@ import { AuthzProvider } from "./AuthzContext";
 import ProtectedRoute from "./ProtectedRoute";
 
 function App() {
-  const [selectedUserID, setSelectedUserID] = useState(null);
+  const [selectedUserID, setSelectedUserID] = useState(() => {
+    return localStorage.getItem("selectedUserID") || null;
+  });
+
+  useEffect(() => {
+    if (selectedUserID) {
+      localStorage.setItem("selectedUserID", selectedUserID);
+    } else {
+      localStorage.removeItem("selectedUserID"); // Clean up on logout/reset
+    }
+  }, [selectedUserID]);
 
   return (
     <BrowserRouter>
@@ -52,7 +62,6 @@ function App() {
             }
           />
 
-          {/* fallback */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </AuthzProvider>
