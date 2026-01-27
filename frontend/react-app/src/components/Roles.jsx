@@ -2,10 +2,12 @@ import React, { useEffect, useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useAuthz } from "../AuthzContext";
 import "./Roles.css";
 
 const Roles = () => {
   const { isAuthenticated, isLoading, loginWithRedirect, user } = useAuth0();
+  const { refreshAuth } = useAuthz();
   const navigate = useNavigate();
 
   const [selectedRole, setSelectedRole] = useState("");
@@ -32,25 +34,26 @@ const Roles = () => {
     setError("");
     if (!selectedRole || !user) return;
 
-    // Patient = default path
     if (selectedRole === "Patient") {
       navigate("/patient-dashboard");
       return;
     }
 
-    // Insurer intent
     if (selectedRole === "Insurer") {
       try {
         setCheckingAuth(true);
         const authorized = await checkInsurerAuthorization();
-        setCheckingAuth(false);
-
+        
         if (!authorized) {
+          setCheckingAuth(false);
           setShowAuthDialog(true);
           return;
         }
 
-        navigate("/users"); // ProtectedRoute will enforce access
+        await refreshAuth(); 
+        
+        setCheckingAuth(false);
+        navigate("/users"); 
       } catch {
         setCheckingAuth(false);
         setError("Unable to verify authorization.");
@@ -73,9 +76,11 @@ const Roles = () => {
         }
       );
 
+      await refreshAuth(); 
       setShowAuthDialog(false);
       setAuthId("");
-      setError("Authorization request submitted. Please wait for approval.");
+      setError("Authorization successful! Click Continue.");
+      
     } catch {
       setError("Invalid Authorization ID.");
     }
