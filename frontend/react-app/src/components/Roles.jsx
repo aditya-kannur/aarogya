@@ -5,108 +5,117 @@ import axios from "axios";
 import "./Roles.css";
 
 const Roles = () => {
-  const { isAuthenticated, loginWithRedirect, user } = useAuth0();
+  const { isAuthenticated, isLoading, loginWithRedirect, user } = useAuth0();
   const navigate = useNavigate();
+
   const [selectedRole, setSelectedRole] = useState("");
   const [error, setError] = useState("");
-  const [showAuthPrompt, setShowAuthPrompt] = useState(false);
   const [showAuthDialog, setShowAuthDialog] = useState(false);
-  const [authEmail, setAuthEmail] = useState("");
   const [authId, setAuthId] = useState("");
+  const [checkingAuth, setCheckingAuth] = useState(false);
 
   useEffect(() => {
-    const savedRole = localStorage.getItem("userRole");
-    if (!isAuthenticated) {
+    if (!isLoading && !isAuthenticated) {
       loginWithRedirect();
-    } else if (savedRole) {
-      navigate(savedRole === "Patient" ? "/patient-dashboard" : "/users");
     }
-  }, [isAuthenticated, navigate, loginWithRedirect]);
+  }, [isAuthenticated, isLoading, loginWithRedirect]);
+
+  const checkInsurerAuthorization = async () => {
+    const res = await axios.post(
+      "http://localhost:5000/api/insurer/check-authorization",
+      { email: user.email }
+    );
+    return res.data.authorized;
+  };
 
   const handleContinue = async () => {
     setError("");
-    if (!selectedRole) return;
+    if (!selectedRole || !user) return;
+
+    // Patient = default path
+    if (selectedRole === "Patient") {
+      navigate("/patient-dashboard");
+      return;
+    }
+
+    // Insurer intent
     if (selectedRole === "Insurer") {
-      // Check authorization from backend
       try {
-        const res = await axios.post("http://localhost:5000/api/insurer/check-authorization", {
-          email: user.email,
-        });
-        if (!res.data.authorized) {
-          setShowAuthPrompt(true);
+        setCheckingAuth(true);
+        const authorized = await checkInsurerAuthorization();
+        setCheckingAuth(false);
+
+        if (!authorized) {
+          setShowAuthDialog(true);
           return;
         }
+
+        navigate("/users"); // ProtectedRoute will enforce access
       } catch {
-        setShowAuthPrompt(true);
-        return;
+        setCheckingAuth(false);
+        setError("Unable to verify authorization.");
       }
     }
-    localStorage.setItem("userRole", selectedRole);
-    navigate(selectedRole === "Patient" ? "/patient-dashboard" : "/users");
   };
 
-  // Show dialog to enter email and authorization ID
-  const handleRequestAuthorization = () => {
-    setShowAuthPrompt(false);
-    setAuthEmail(user.email);
-    setShowAuthDialog(true);
-  };
-
-  // Submit authorization request
-  const handleAuthDialogSubmit = async (e) => {
+  const submitAuthorizationRequest = async (e) => {
     e.preventDefault();
     setError("");
+
     try {
-      await axios.post("http://localhost:5000/api/insurer/request-authorization", {
-        email: authEmail,
-        name: user.name,
-        role: "Insurer",
-        authId: authId,
-      });
+      await axios.post(
+        "http://localhost:5000/api/insurer/request-authorization",
+        {
+          email: user.email,
+          name: user.name,
+          role: "Insurer",
+          authId,
+        }
+      );
+
       setShowAuthDialog(false);
-      setError("Authorization successful. You can now access the Insurer dashboard.");
-    } catch (err) {
-      setError("Authorization failed. Please check your Authorization ID.");
+      setAuthId("");
+      setError("Authorization request submitted. Please wait for approval.");
+    } catch {
+      setError("Invalid Authorization ID.");
     }
   };
+
+  if (isLoading) return null;
 
   return (
     <div className="roles-container">
       <div className="roles-box">
         <h2>Select Your Role</h2>
-        <label htmlFor="roleSelect">Choose a role:</label>
-        <select id="roleSelect" value={selectedRole} onChange={(e) => setSelectedRole(e.target.value)}>
+
+        <select
+          value={selectedRole}
+          onChange={(e) => setSelectedRole(e.target.value)}
+        >
           <option value="">-- Select Role --</option>
           <option value="Patient">Patient</option>
           <option value="Insurer">Insurer</option>
         </select>
-        <button className="continue-btn" onClick={handleContinue} disabled={!selectedRole}>
-          Continue
+
+        <button onClick={handleContinue} disabled={!selectedRole || checkingAuth}>
+          {checkingAuth ? "Checking..." : "Continue"}
         </button>
-        {error && <p style={{ color: "red", marginTop: "10px" }}>{error}</p>}
-        {showAuthPrompt && (
-          <div style={{ marginTop: "15px" }}>
-            <p>You are not authorized as an insurer.<br />Do you want to request authorization?</p>
-            <button onClick={handleRequestAuthorization}>Yes, Request Authorization</button>
-            <button onClick={() => setShowAuthPrompt(false)} style={{ marginLeft: "10px" }}>Cancel</button>
-          </div>
-        )}
+
+        {error && <p className="error">{error}</p>}
+
         {showAuthDialog && (
           <div className="modal-overlay">
             <div className="modal-content">
-              <h3>Authorization Required</h3>
-              <form onSubmit={handleAuthDialogSubmit}>
+              <h3>Insurer Authorization Required</h3>
+
+              <form onSubmit={submitAuthorizationRequest}>
                 <label>
-                  Email:
-                  <input
-                    type="email"
-                    value={authEmail}
-                    onChange={(e) => setAuthEmail(e.target.value)}
-                    required
-                  />
+                  Email
+                  <input type="email" value={user.email} disabled />
                 </label>
+
                 <label>
-                  Authorization ID:
+                  Authorization ID
                   <input
                     type="password"
                     value={authId}
@@ -114,8 +123,9 @@ const Roles = () => {
                     required
                   />
                 </label>
+
                 <button type="submit">Submit</button>
-                <button type="button" onClick={() => setShowAuthDialog(false)} style={{ marginLeft: "10px" }}>
+                <button type="button" onClick={() => setShowAuthDialog(false)}>
                   Cancel
                 </button>
               </form>
