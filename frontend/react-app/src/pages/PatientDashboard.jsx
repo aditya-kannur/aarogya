@@ -8,18 +8,17 @@ import "./PatientDashboard.css";
 
 function PatientDashboard() {
   const { user, logout, isLoading, isAuthenticated } = useAuth0();
-  // We need refreshAuth, but we will ONLY use it when actually switching
   const { refreshAuth } = useAuthz(); 
   const navigate = useNavigate();
 
-  // --- STATE ---
+  // STATE
   const [showForm, setShowForm] = useState(false);
   const [claims, setClaims] = useState([]);
   const [filter, setFilter] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
 
-  // --- MODAL STATE ---
+  // MODAL STATE
   const [showSwitchConfirm, setShowSwitchConfirm] = useState(false);
   const [showAuthPrompt, setShowAuthPrompt] = useState(false);
   const [showAuthForm, setShowAuthForm] = useState(false);
@@ -43,44 +42,35 @@ function PatientDashboard() {
     }
   };
 
-  // --- FIXED SWITCHING LOGIC ---
 
-  // 1. Initial Click: SILENT CHECK (No global refresh)
   const handleSwitchClick = async () => {
     try {
-        // We check API directly. This does NOT trigger the global 'Loading...' screen.
         const res = await axios.post("http://localhost:5000/api/insurer/check-authorization", { 
             email: user.email 
         });
         
         const isAuthorized = res.data.authorized;
 
-        // Decide immediately based on the result
         if (isAuthorized) {
-            setShowSwitchConfirm(true); // Show "Are you sure?"
+            setShowSwitchConfirm(true); 
         } else {
-            setShowAuthPrompt(true);    // Show "Access Denied. Request?"
+            setShowAuthPrompt(true);    
         }
     } catch (err) {
         console.error("Check failed", err);
-        setShowAuthPrompt(true); // Default to prompt if check fails
+        setShowAuthPrompt(true); 
     }
   };
 
-  // 2. Execute Switch: UPDATE DB & CONTEXT
+  // UPDATE DB & CONTEXT
   const executeSwitch = async () => {
     try {
-        // A. Save preference to DB
         await axios.post("http://localhost:5000/api/user/role", { 
             email: user.email, 
             role: "Insurer" 
         });
-
-        // B. NOW we call refreshAuth() because we are about to leave anyway.
-        // This will trigger the global loader, which is fine now.
         await refreshAuth(); 
 
-        // C. Navigate
         navigate("/users"); 
     } catch (err) {
         console.error("Switch failed", err);
@@ -88,13 +78,12 @@ function PatientDashboard() {
     }
   };
 
-  // 3. Submit Auth Request
+  // Submit Auth Request
   const submitAuthRequest = async (e) => {
     e.preventDefault();
     setAuthError("");
 
     try {
-      // Request Auth
       await axios.post(
         "http://localhost:5000/api/insurer/request-authorization",
         {
@@ -105,9 +94,8 @@ function PatientDashboard() {
         }
       );
 
-      // Save role & Refresh & Switch
       await axios.post("http://localhost:5000/api/user/role", { email: user.email, role: "Insurer" });
-      await refreshAuth(); // Valid here because we are switching
+      await refreshAuth(); 
       
       setShowAuthForm(false);
       navigate("/users");
@@ -142,7 +130,6 @@ function PatientDashboard() {
         <div className="logo"><img src="/assets/logo.svg" alt="Logo" /></div>
         <div className="sidebar-icons"><button>Claims</button></div>
         <div className="sidebar-footer">
-             {/* Use the new handleSwitchClick */}
              <button onClick={handleSwitchClick}>Switch to Insurer</button>
         </div>
       </div>
@@ -197,8 +184,6 @@ function PatientDashboard() {
           ) : (<p className="no-claims">No claims found.</p>)}
         </div>
       </div>
-
-      {/* --- MODALS --- */}
 
       {/* 1. CONFIRMATION DIALOG */}
       {showSwitchConfirm && (

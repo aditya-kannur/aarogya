@@ -9,21 +9,21 @@ function InsurerDashboard({ userID }) {
   const { user, logout } = useAuth0();
   const navigate = useNavigate();
   
-  // --- STATE ---
+  // STATE
   const [claims, setClaims] = useState([]);
   const [selectedClaim, setSelectedClaim] = useState(null);
   const [filter, setFilter] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
 
-  // --- NEW: MODAL STATE ---
+  //  NEW: MODAL STATE
   const [showSwitchConfirm, setShowSwitchConfirm] = useState(false);
 
   useEffect(() => {
     if(userID) {
         fetchClaims();
     }
-    // eslint-disable-next-line
+    // eslint disable next line
   }, [userID]);
 
   const fetchClaims = async () => {
@@ -44,17 +44,14 @@ function InsurerDashboard({ userID }) {
     setShowDropdown((prev) => !prev);
   };
 
-  // --- SWITCHING LOGIC ---
-
-  // 1. Initial Click: Show Confirmation Modal
+  // Show Confirmation Modal
   const handleSwitchClick = () => {
       setShowSwitchConfirm(true);
   };
 
-  // 2. Execute Switch: Update DB and Navigate
+  // Update DB and Navigate
   const executeSwitch = async () => {
       try {
-          // Update preference to Patient
           await axios.post("http://localhost:5000/api/user/role", { 
              email: user.email, 
              role: "Patient" 
@@ -64,12 +61,11 @@ function InsurerDashboard({ userID }) {
           navigate("/patient-dashboard");
       } catch (err) {
           console.error("Error switching role", err);
-          // Navigate anyway to ensure user isn't stuck
           navigate("/patient-dashboard"); 
       }
   };
 
-  // --- FILTERING ---
+  // FILTERING
   const filteredClaims = claims.filter((claim) => {
     const matchesSearch = searchQuery
       ? claim.name.toLowerCase().includes(searchQuery) ||

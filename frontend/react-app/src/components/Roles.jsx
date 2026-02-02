@@ -2,12 +2,12 @@ import React, { useEffect, useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { useAuthz } from "../AuthzContext"; // Import Context
+import { useAuthz } from "../AuthzContext"; 
 import "./Roles.css";
 
 const Roles = () => {
   const { isAuthenticated, isLoading, loginWithRedirect, user } = useAuth0();
-  const { refreshAuth, savedRole } = useAuthz(); // Get savedRole
+  const { refreshAuth, savedRole } = useAuthz(); 
   const navigate = useNavigate();
 
   const [selectedRole, setSelectedRole] = useState("");
@@ -22,7 +22,6 @@ const Roles = () => {
     }
   }, [isAuthenticated, isLoading, loginWithRedirect]);
 
-  // --- NEW: AUTO-REDIRECT IF ROLE EXISTS ---
   useEffect(() => {
     if (savedRole === "Patient") {
         navigate("/patient-dashboard");
@@ -30,7 +29,6 @@ const Roles = () => {
         navigate("/users"); // Or /insurer-dashboard
     }
   }, [savedRole, navigate]);
-  // ----------------------------------------
 
   const checkInsurerAuthorization = async () => {
     const res = await axios.post(
@@ -65,7 +63,7 @@ const Roles = () => {
           return;
         }
 
-        // 1. SAVE ROLE TO DB
+        // SAVE ROLE TO DB
         await axios.post("http://localhost:5000/api/user/role", { email: user.email, role: "Insurer" });
         
         await refreshAuth(); 
