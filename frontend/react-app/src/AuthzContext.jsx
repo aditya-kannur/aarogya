@@ -6,7 +6,9 @@ const AuthzContext = createContext();
 
 export const AuthzProvider = ({ children }) => {
   const { user, isAuthenticated, isLoading } = useAuth0();
+  
   const [isInsurer, setIsInsurer] = useState(null);
+  const [savedRole, setSavedRole] = useState(""); // Stores "Patient" or "Insurer"
   const [loadingAuthz, setLoadingAuthz] = useState(true);
 
   const checkAuthorization = useCallback(async () => {
@@ -17,11 +19,17 @@ export const AuthzProvider = ({ children }) => {
 
     setLoadingAuthz(true); 
     try {
-      const res = await axios.post(
+      // Check if Authorized Insurer (Existing)
+      const authRes = await axios.post(
         "http://localhost:5000/api/insurer/check-authorization",
         { email: user.email }
       );
-      setIsInsurer(res.data.authorized);
+      setIsInsurer(authRes.data.authorized);
+
+      // Fetch Saved Role Preference (New)
+      const roleRes = await axios.get(`http://localhost:5000/api/user/role/${user.email}`);
+      setSavedRole(roleRes.data.lastRole);
+
     } catch (error) {
       console.error("Auth check failed", error);
       setIsInsurer(false);
@@ -35,7 +43,7 @@ export const AuthzProvider = ({ children }) => {
   }, [checkAuthorization]);
 
   return (
-    <AuthzContext.Provider value={{ isInsurer, loadingAuthz, refreshAuth: checkAuthorization }}>
+    <AuthzContext.Provider value={{ isInsurer, savedRole, loadingAuthz, refreshAuth: checkAuthorization }}>
       {children}
     </AuthzContext.Provider>
   );

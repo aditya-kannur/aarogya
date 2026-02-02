@@ -277,3 +277,92 @@
   color: hsl(273, 4%, 51%);
   font-size: 16px;
 }
+
+/* Modal styles aligned with PatientDashboard theme */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(160, 151, 151, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(3px);
+}
+
+.modal-content {
+  background: #252a41;
+  padding: 25px;
+  border-radius: 12px;
+  width: 400px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  color: white;
+  text-align: center;
+}
+
+.modal-content.small-modal {
+  width: 400px;
+}
+
+.modal-content h3 {
+  margin-bottom: 10px;
+  color: hsl(270, 9%, 17%);
+}
+
+.modal-content p {
+  color: hsl(270, 9%, 17%);
+  margin-bottom: 20px;
+  font-size: 0.95rem;
+}
+
+.modal-content input {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0 20px 0;
+  border-radius: 6px;
+  border: 1px solid #444;
+  background: #1e2235;
+  color: white;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+}
+
+.modal-actions button {
+  flex: 1;
+  padding: 10px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.2s;
+}
+
+.cancel-btn {
+  background: hsl(270, 24%, 87%);
+  border: 1px solid hsl(270, 9%, 17%);;
+  color: #ccc;
+}
+.cancel-btn:hover {
+  background:hsl(270, 9%, 17%);
+}
+
+.confirm-btn {
+  background: #02033a;
+  color: white;
+}
+.confirm-btn:hover {
+  background: #0a0394;
+}
+
+.error-text {
+  color: #f02121;
+  font-size: 0.85rem;
+  margin-bottom: 10px;
+}
