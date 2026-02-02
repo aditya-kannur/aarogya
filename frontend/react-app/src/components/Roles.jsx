@@ -2,12 +2,12 @@ import React, { useEffect, useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { useAuthz } from "../AuthzContext";
+import { useAuthz } from "../AuthzContext"; // Import Context
 import "./Roles.css";
 
 const Roles = () => {
   const { isAuthenticated, isLoading, loginWithRedirect, user } = useAuth0();
-  const { refreshAuth } = useAuthz();
+  const { refreshAuth, savedRole } = useAuthz(); // Get savedRole
   const navigate = useNavigate();
 
   const [selectedRole, setSelectedRole] = useState("");
@@ -22,6 +22,16 @@ const Roles = () => {
     }
   }, [isAuthenticated, isLoading, loginWithRedirect]);
 
+  // --- NEW: AUTO-REDIRECT IF ROLE EXISTS ---
+  useEffect(() => {
+    if (savedRole === "Patient") {
+        navigate("/patient-dashboard");
+    } else if (savedRole === "Insurer") {
+        navigate("/users"); // Or /insurer-dashboard
+    }
+  }, [savedRole, navigate]);
+  // ----------------------------------------
+
   const checkInsurerAuthorization = async () => {
     const res = await axios.post(
       "http://localhost:5000/api/insurer/check-authorization",
@@ -35,6 +45,11 @@ const Roles = () => {
     if (!selectedRole || !user) return;
 
     if (selectedRole === "Patient") {
+      // 1. SAVE ROLE TO DB
+      await axios.post("http://localhost:5000/api/user/role", { email: user.email, role: "Patient" });
+      // 2. Refresh Context
+      await refreshAuth();
+      // 3. Go
       navigate("/patient-dashboard");
       return;
     }
@@ -50,8 +65,10 @@ const Roles = () => {
           return;
         }
 
-        await refreshAuth(); 
+        // 1. SAVE ROLE TO DB
+        await axios.post("http://localhost:5000/api/user/role", { email: user.email, role: "Insurer" });
         
+        await refreshAuth(); 
         setCheckingAuth(false);
         navigate("/users"); 
       } catch {
@@ -76,11 +93,13 @@ const Roles = () => {
         }
       );
 
+      // SAVE ROLE & REFRESH
+      await axios.post("http://localhost:5000/api/user/role", { email: user.email, role: "Insurer" });
       await refreshAuth(); 
+      
       setShowAuthDialog(false);
       setAuthId("");
-      setError("Authorization successful! Click Continue.");
-      
+      setError("Authorization request submitted.");
     } catch {
       setError("Invalid Authorization ID.");
     }

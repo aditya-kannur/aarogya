@@ -5,43 +5,71 @@ import axios from "axios";
 import ClaimModel from "./ClaimModel"; 
 import "./InsurerDashboard.css"; 
 
-// 1. CRITICAL FIX: Add curly braces { userID } to destructure the prop
 function InsurerDashboard({ userID }) {
   const { user, logout } = useAuth0();
   const navigate = useNavigate();
+  
+  // --- STATE ---
   const [claims, setClaims] = useState([]);
   const [selectedClaim, setSelectedClaim] = useState(null);
   const [filter, setFilter] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
 
+  // --- NEW: MODAL STATE ---
+  const [showSwitchConfirm, setShowSwitchConfirm] = useState(false);
+
   useEffect(() => {
     if(userID) {
         fetchClaims();
     }
+    // eslint-disable-next-line
   }, [userID]);
 
-  // Fetch user specific claims
-const fetchClaims = async (userID) => {
-  try {
-    const res = await axios.get(
-      `http://localhost:5000/api/insurer/claims/user/${encodeURIComponent(userID)}`,
-      { headers: { "Cache-Control": "no-cache" } }
-    );
-    // axios throws on non-2xx, but guard in case response has no data
-    setClaims(res.data || []);
-  } catch (err) {
-    console.error("fetchClaims error:", err);
-    setClaims([]);
-  }
-};
+  const fetchClaims = async () => {
+    if (!userID) return;
+    try {
+      const res = await axios.get(
+        `http://localhost:5000/api/insurer/claims/user/${encodeURIComponent(userID)}`,
+        { headers: { "Cache-Control": "no-cache" } }
+      );
+      setClaims(res.data || []);
+    } catch (err) {
+      console.error("fetchClaims error:", err);
+      setClaims([]);
+    }
+  };
 
-  // Toggle dropdown menu
   const toggleDropdown = () => {
     setShowDropdown((prev) => !prev);
   };
 
-  // Filter + Search Logic
+  // --- SWITCHING LOGIC ---
+
+  // 1. Initial Click: Show Confirmation Modal
+  const handleSwitchClick = () => {
+      setShowSwitchConfirm(true);
+  };
+
+  // 2. Execute Switch: Update DB and Navigate
+  const executeSwitch = async () => {
+      try {
+          // Update preference to Patient
+          await axios.post("http://localhost:5000/api/user/role", { 
+             email: user.email, 
+             role: "Patient" 
+          });
+          
+          // Navigate
+          navigate("/patient-dashboard");
+      } catch (err) {
+          console.error("Error switching role", err);
+          // Navigate anyway to ensure user isn't stuck
+          navigate("/patient-dashboard"); 
+      }
+  };
+
+  // --- FILTERING ---
   const filteredClaims = claims.filter((claim) => {
     const matchesSearch = searchQuery
       ? claim.name.toLowerCase().includes(searchQuery) ||
@@ -56,26 +84,24 @@ const fetchClaims = async (userID) => {
 
   return (
     <div className="dashboard-container">
+      {/* --- SIDEBAR --- */}
       <div className="sidebar">
         <div className="logo">
-           {/* Ensure path is correct for your project structure */}
-          <img src="../../assets/logo.svg" alt="Logo" />
+          <img src="/assets/logo.svg" alt="Logo" />
         </div>
         <div className="sidebar-icons">
           <button>Claims</button>
         </div>
+        
+        {/* --- FOOTER WITH SWITCH BUTTON --- */}
         <div className="sidebar-footer">
-          <button
-            onClick={() => {
-              localStorage.removeItem("userRole");
-              navigate("/roles");
-            }}
-          >
-            Change Role
+          <button onClick={handleSwitchClick}>
+            Switch to Patient
           </button>
         </div>
       </div>
 
+      {/* --- CONTENT --- */}
       <div className="content">
         <div className="header">
           <div className="user-greeting">
@@ -83,7 +109,6 @@ const fetchClaims = async (userID) => {
             <p>Viewing Claims for User ID: <strong>{userID}</strong></p>
           </div>
 
-          {/* User Profile Dropdown */}
           <div className="user-info" onClick={toggleDropdown}>
             <img src={user?.picture} alt="User" className="user-img" />
             <div className="user-details">
@@ -91,7 +116,6 @@ const fetchClaims = async (userID) => {
               <p>{user?.email}</p>
             </div>
 
-            {/* Dropdown Menu */}
             {showDropdown && (
               <div className="dropdown-menu">
                 <button onClick={() => logout({ returnTo: window.location.origin })}>
@@ -101,8 +125,7 @@ const fetchClaims = async (userID) => {
             )}
           </div>
         </div>
-
-        {/* Search Bar */}
+        
         <div className="search-claims-container">
           <input
             type="text"
@@ -113,7 +136,6 @@ const fetchClaims = async (userID) => {
           />
         </div>
 
-        {/* Filters */}
         <div className="filters">
           {["All", "Pending", "Approved", "Rejected"].map((status) => (
             <button
@@ -126,7 +148,6 @@ const fetchClaims = async (userID) => {
           ))}
         </div>
 
-        {/* Claims List */}
         <div className="claims-section">
           {filteredClaims.length > 0 ? (
             filteredClaims.map((claim, index) => (
@@ -144,9 +165,27 @@ const fetchClaims = async (userID) => {
           )}
         </div>
 
-        {/* Claim Modal */}
         {selectedClaim && <ClaimModel claim={selectedClaim} onClose={() => setSelectedClaim(null)} onUpdate={fetchClaims} />}
       </div>
+
+      {/* --- CONFIRMATION MODAL --- */}
+      {showSwitchConfirm && (
+        <div className="modal-overlay">
+          <div className="modal-content small-modal">
+            <h3>Switch Role?</h3>
+            <p>You are about to switch to the Patient Dashboard.</p>
+            <div className="modal-actions">
+              <button className="cancel-btn" onClick={() => setShowSwitchConfirm(false)}>
+                Cancel
+              </button>
+              <button className="confirm-btn" onClick={executeSwitch}>
+                Continue
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }
