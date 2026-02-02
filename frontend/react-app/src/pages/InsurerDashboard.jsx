@@ -44,20 +44,13 @@ function InsurerDashboard({ userID }) {
     setShowDropdown((prev) => !prev);
   };
 
-  // Show Confirmation Modal
-  const handleSwitchClick = () => {
-      setShowSwitchConfirm(true);
-  };
+ const handleSwitchClick = () => setShowSwitchConfirm(true);
 
-  // Update DB and Navigate
   const executeSwitch = async () => {
       try {
           await axios.post("http://localhost:5000/api/user/role", { 
-             email: user.email, 
-             role: "Patient" 
+             email: user.email, role: "Patient" 
           });
-          
-          // Navigate
           navigate("/patient-dashboard");
       } catch (err) {
           console.error("Error switching role", err);

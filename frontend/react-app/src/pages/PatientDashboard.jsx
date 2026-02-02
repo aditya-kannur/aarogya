@@ -63,14 +63,12 @@ function PatientDashboard() {
   };
 
   // UPDATE DB & CONTEXT
-  const executeSwitch = async () => {
+const executeSwitch = async () => {
     try {
+        // SAVE PREFERENCE: Insurer
         await axios.post("http://localhost:5000/api/user/role", { 
-            email: user.email, 
-            role: "Insurer" 
+            email: user.email, role: "Insurer" 
         });
-        await refreshAuth(); 
-
         navigate("/users"); 
     } catch (err) {
         console.error("Switch failed", err);
