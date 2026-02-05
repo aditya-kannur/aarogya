@@ -103,7 +103,7 @@ const executeSwitch = async () => {
     }
   };
 
-  // --- UTILS ---
+  //  UTILS 
   const handleShowForm = () => setShowForm(true);
   const handleSearch = (e) => setSearchQuery(e.target.value.toLowerCase());
   const toggleDropdown = () => setShowDropdown((prev) => !prev);
@@ -183,7 +183,7 @@ const executeSwitch = async () => {
         </div>
       </div>
 
-      {/* 1. CONFIRMATION DIALOG */}
+      {/* CONFIRMATION DIALOG */}
       {showSwitchConfirm && (
         <div className="modal-overlay">
           <div className="modal-content small-modal">
@@ -197,7 +197,7 @@ const executeSwitch = async () => {
         </div>
       )}
 
-      {/* 2. UNAUTHORIZED PROMPT */}
+      {/* UNAUTHORIZED PROMPT */}
       {showAuthPrompt && (
         <div className="modal-overlay">
           <div className="modal-content small-modal">
@@ -212,7 +212,7 @@ const executeSwitch = async () => {
         </div>
       )}
 
-      {/* 3. AUTHORIZATION FORM */}
+      {/* AUTHORIZATION FORM */}
       {showAuthForm && (
         <div className="modal-overlay">
           <div className="modal-content">

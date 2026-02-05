@@ -2,13 +2,13 @@ import React, { useState, useEffect } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import ClaimModel from "./ClaimModel"; 
-import "./InsurerDashboard.css"; 
+import ClaimModel from "./ClaimModel";
+import "./InsurerDashboard.css";
 
 function InsurerDashboard({ userID }) {
   const { user, logout } = useAuth0();
   const navigate = useNavigate();
-  
+
   // STATE
   const [claims, setClaims] = useState([]);
   const [selectedClaim, setSelectedClaim] = useState(null);
@@ -16,12 +16,12 @@ function InsurerDashboard({ userID }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
 
-  //  NEW: MODAL STATE
+  //  MODAL STATE
   const [showSwitchConfirm, setShowSwitchConfirm] = useState(false);
 
   useEffect(() => {
-    if(userID) {
-        fetchClaims();
+    if (userID) {
+      fetchClaims();
     }
     // eslint disable next line
   }, [userID]);
@@ -44,26 +44,26 @@ function InsurerDashboard({ userID }) {
     setShowDropdown((prev) => !prev);
   };
 
- const handleSwitchClick = () => setShowSwitchConfirm(true);
+  const handleSwitchClick = () => setShowSwitchConfirm(true);
 
   const executeSwitch = async () => {
-      try {
-          await axios.post("http://localhost:5000/api/user/role", { 
-             email: user.email, role: "Patient" 
-          });
-          navigate("/patient-dashboard");
-      } catch (err) {
-          console.error("Error switching role", err);
-          navigate("/patient-dashboard"); 
-      }
+    try {
+      await axios.post("http://localhost:5000/api/user/role", {
+        email: user.email, role: "Patient"
+      });
+      navigate("/patient-dashboard");
+    } catch (err) {
+      console.error("Error switching role", err);
+      navigate("/patient-dashboard");
+    }
   };
 
   // FILTERING
   const filteredClaims = claims.filter((claim) => {
     const matchesSearch = searchQuery
       ? claim.name.toLowerCase().includes(searchQuery) ||
-        claim.status.toLowerCase().includes(searchQuery) ||
-        claim.amount.toString().includes(searchQuery)
+      claim.status.toLowerCase().includes(searchQuery) ||
+      claim.amount.toString().includes(searchQuery)
       : true;
 
     const matchesFilter = filter === "All" || claim.status === filter;
@@ -79,9 +79,10 @@ function InsurerDashboard({ userID }) {
           <img src="/assets/logo.svg" alt="Logo" />
         </div>
         <div className="sidebar-icons">
-          <button>Claims</button>
+          <button style={{ background: "rgba(255, 255, 255, 0.1)" }}>Claims</button>
+          <button onClick={() => navigate("/users")}>← Back to Users</button>
         </div>
-        
+
         {/* --- FOOTER WITH SWITCH BUTTON --- */}
         <div className="sidebar-footer">
           <button onClick={handleSwitchClick}>
@@ -95,7 +96,7 @@ function InsurerDashboard({ userID }) {
         <div className="header">
           <div className="user-greeting">
             <h1>Hi, {user?.name}</h1>
-            <p>Viewing Claims for User ID: <strong>{userID}</strong></p>
+            <p>Viewing Claims for: <strong>{claims.length > 0 ? claims[0].name : "User ID " + userID}</strong></p>
           </div>
 
           <div className="user-info" onClick={toggleDropdown}>
@@ -114,7 +115,7 @@ function InsurerDashboard({ userID }) {
             )}
           </div>
         </div>
-        
+
         <div className="search-claims-container">
           <input
             type="text"

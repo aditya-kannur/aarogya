@@ -1,0 +1,112 @@
+/* Main Container */
+.select-user-container {
+    display: flex;
+    font-family: "Karla", sans-serif;
+    background-color: transparent;
+}
+
+.select-user-content {
+    margin-left: 200px;
+    width: calc(100% - 200px);
+    padding: 20px;
+    height: 100vh;
+    overflow-y: hidden;
+}
+
+/* Share header styling with dashboard */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.user-greeting h1 {
+    font-size: 24px;
+    color: hsl(256, 26%, 20%);
+    margin: 0;
+}
+
+/* Claim Tile Styling for User Rows */
+.claim-tile {
+    display: flex;
+    align-items: center;
+    /* Ensure vertical centering */
+    background: white;
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 8px;
+    box-shadow: 2px 2px 15px rgba(185, 14, 14, 0.2);
+    justify-content: space-between;
+    transition: transform 0.2s;
+    cursor: pointer;
+}
+
+.claim-tile:hover {
+    transform: scale(1.01);
+    border: 1px solid hsl(256, 26%, 20%);
+}
+
+.claim-tile span {
+    flex: 1;
+    text-align: center;
+    font-family: "Karla", sans-serif;
+    color: hsl(256, 26%, 20%);
+}
+
+.col-avatar {
+    flex: 0 0 60px !important;
+    /* Fixed width for avatar */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.col-user-name {
+    flex: 2 !important;
+    /* Give more space to name */
+    text-align: left !important;
+    font-weight: bold;
+    font-size: 16px;
+    padding-left: 20px;
+}
+
+.col-claims-count {
+    flex: 1;
+    text-align: right !important;
+    padding-right: 20px;
+    font-weight: bold;
+    color: hsl(256, 26%, 20%);
+}
+
+.user-avatar-small {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.no-claims {
+    text-align: center;
+    color: hsl(273, 4%, 51%);
+    font-size: 16px;
+    margin-top: 20px;
+}
+
+/* Search Bar */
+.search-claims-container {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 30px;
+    gap: 20px;
+}
+
+.search-bar {
+    flex: 1;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid hsl(273, 4%, 51%);
+    border-radius: 8px;
+    font-family: "Karla", sans-serif;
+}
