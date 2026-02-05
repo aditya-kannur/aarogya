@@ -144,7 +144,7 @@ function PatientDashboard() {
             <div className="user-details"><p>{user.name}</p><p>{user.email}</p></div>
             {showDropdown && (
               <div className="dropdown-menu">
-                <button onClick={() => logout({ returnTo: window.location.origin })}>Logout</button>
+                <button onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })}>Logout</button>
               </div>
             )}
           </div>

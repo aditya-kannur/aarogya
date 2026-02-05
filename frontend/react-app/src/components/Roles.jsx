@@ -7,7 +7,7 @@ import "./Roles.css";
 
 const Roles = () => {
   const { isAuthenticated, isLoading, loginWithRedirect, user } = useAuth0();
-  const { refreshAuth, savedRole } = useAuthz();
+  const { refreshAuth, savedRole, loadingAuthz } = useAuthz();
   const navigate = useNavigate();
 
   const [selectedRole, setSelectedRole] = useState("");
@@ -23,12 +23,14 @@ const Roles = () => {
   }, [isAuthenticated, isLoading, loginWithRedirect]);
 
   useEffect(() => {
-    if (savedRole === "Patient") {
-      navigate("/patient-dashboard");
-    } else if (savedRole === "Insurer") {
-      navigate("/users");
+    if (!loadingAuthz && savedRole) {
+      if (savedRole === "Patient") {
+        navigate("/patient-dashboard");
+      } else if (savedRole === "Insurer") {
+        navigate("/users");
+      }
     }
-  }, [savedRole, navigate]);
+  }, [savedRole, navigate, loadingAuthz]);
 
   const checkInsurerAuthorization = async () => {
     const res = await axios.post("https://aarogya-qmzf.onrender.com/api/insurer/check-authorization", { email: user.email });
@@ -91,7 +93,7 @@ const Roles = () => {
     }
   };
 
-  if (isLoading) return null;
+  if (isLoading || loadingAuthz) return <div className="roles-container"><div className="roles-box" style={{ color: 'white' }}>Loading...</div></div>;
 
   return (
     <div className="roles-container">

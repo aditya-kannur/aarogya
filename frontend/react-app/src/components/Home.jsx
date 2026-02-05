@@ -1,28 +1,30 @@
 import React, { useEffect } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
 import { useNavigate } from 'react-router-dom';
+import { useAuthz } from '../AuthzContext'; // Import Authz
 import './Home.css';
 
 const Home = () => {
   const { isAuthenticated, loginWithRedirect, logout, isLoading } = useAuth0();
+  const { savedRole, loadingAuthz } = useAuthz(); // Use Context
   const navigate = useNavigate();
 
   // Check if the user already selected a role
   useEffect(() => {
-    if (isAuthenticated) {
-      const savedRole = localStorage.getItem("userRole");
+    if (isLoading || loadingAuthz) return; // Wait for loading
 
-      if (savedRole) {
-        navigate(savedRole === "Patient" ? "/patient-dashboard" : "/insurer-dashboard");
+    if (isAuthenticated) {
+      if (savedRole && savedRole !== "None") {
+        navigate(savedRole === "Patient" ? "/patient-dashboard" : "/users");
       } else {
         navigate("/roles");
       }
     }
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, isLoading, loadingAuthz, savedRole, navigate]);
 
   // Handle login with redirect to roles page
-const handleLogin = async () => {
-    await loginWithRedirect()   
+  const handleLogin = async () => {
+    await loginWithRedirect()
   };
 
 
@@ -44,7 +46,7 @@ const handleLogin = async () => {
             {isAuthenticated ? (
               <button
                 className="navButton"
-                onClick={() => logout({ returnTo: window.location.origin })}
+                onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })}
               >
                 Log Out
               </button>
@@ -71,7 +73,7 @@ const handleLogin = async () => {
               {isAuthenticated ? (
                 <button
                   className="headerButton"
-                  onClick={() => logout({ returnTo: window.location.origin })}
+                  onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })}
                 >
                   Log Out
                 </button>
