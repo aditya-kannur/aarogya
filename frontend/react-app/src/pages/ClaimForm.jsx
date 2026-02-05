@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import axios from "axios";
-import "./ClaimForm.css"; 
+import "./ClaimForm.css";
 
 const ClaimForm = ({ onClose }) => {
   const { user } = useAuth0();
@@ -30,7 +30,7 @@ const ClaimForm = ({ onClose }) => {
     if (!formData.description || formData.description.length < 10) newErrors.description = "Description must be at least 10 characters";
     if (!formData.document) newErrors.document = "File upload is required";
     if (!user) newErrors.user = "User authentication failed";
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -52,7 +52,7 @@ const ClaimForm = ({ onClose }) => {
     data.append("document", formData.document);
 
     try {
-      const response = await axios.post("http://localhost:5000/api/patient/submit", data);
+      const response = await axios.post("https://aarogya-qmzf.onrender.com/api/patient/submit", data);
       if (response.status === 201) {
         alert("Claim submitted successfully!");
         onClose();

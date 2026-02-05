@@ -3,12 +3,12 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { useNavigate, Navigate } from "react-router-dom";
 import axios from "axios";
 import ClaimForm from "./ClaimForm";
-import { useAuthz } from "../AuthzContext"; 
-import "./PatientDashboard.css"; 
+import { useAuthz } from "../AuthzContext";
+import "./PatientDashboard.css";
 
 function PatientDashboard() {
   const { user, logout, isLoading, isAuthenticated } = useAuth0();
-  const { refreshAuth } = useAuthz(); 
+  const { refreshAuth } = useAuthz();
   const navigate = useNavigate();
 
   // STATE
@@ -35,7 +35,7 @@ function PatientDashboard() {
     if (!user?.sub) return;
     try {
       const encodedUserID = encodeURIComponent(user.sub);
-      const response = await axios.get(`http://localhost:5000/api/patient/claims/${encodedUserID}`);
+      const response = await axios.get(`https://aarogya-qmzf.onrender.com/api/patient/claims/${encodedUserID}`);
       setClaims(response.data);
     } catch (error) {
       console.error("Error fetching claims:", error);
@@ -45,34 +45,34 @@ function PatientDashboard() {
 
   const handleSwitchClick = async () => {
     try {
-        const res = await axios.post("http://localhost:5000/api/insurer/check-authorization", { 
-            email: user.email 
-        });
-        
-        const isAuthorized = res.data.authorized;
+      const res = await axios.post("https://aarogya-qmzf.onrender.com/api/insurer/check-authorization", {
+        email: user.email
+      });
 
-        if (isAuthorized) {
-            setShowSwitchConfirm(true); 
-        } else {
-            setShowAuthPrompt(true);    
-        }
+      const isAuthorized = res.data.authorized;
+
+      if (isAuthorized) {
+        setShowSwitchConfirm(true);
+      } else {
+        setShowAuthPrompt(true);
+      }
     } catch (err) {
-        console.error("Check failed", err);
-        setShowAuthPrompt(true); 
+      console.error("Check failed", err);
+      setShowAuthPrompt(true);
     }
   };
 
   // UPDATE DB & CONTEXT
-const executeSwitch = async () => {
+  const executeSwitch = async () => {
     try {
-        // SAVE PREFERENCE: Insurer
-        await axios.post("http://localhost:5000/api/user/role", { 
-            email: user.email, role: "Insurer" 
-        });
-        navigate("/users"); 
+      // SAVE PREFERENCE: Insurer
+      await axios.post("https://aarogya-qmzf.onrender.com/api/user/role", {
+        email: user.email, role: "Insurer"
+      });
+      navigate("/users");
     } catch (err) {
-        console.error("Switch failed", err);
-        navigate("/users"); 
+      console.error("Switch failed", err);
+      navigate("/users");
     }
   };
 
@@ -83,7 +83,7 @@ const executeSwitch = async () => {
 
     try {
       await axios.post(
-        "http://localhost:5000/api/insurer/request-authorization",
+        "https://aarogya-qmzf.onrender.com/api/insurer/request-authorization",
         {
           email: user.email,
           name: user.name,
@@ -92,9 +92,9 @@ const executeSwitch = async () => {
         }
       );
 
-      await axios.post("http://localhost:5000/api/user/role", { email: user.email, role: "Insurer" });
-      await refreshAuth(); 
-      
+      await axios.post("https://aarogya-qmzf.onrender.com/api/user/role", { email: user.email, role: "Insurer" });
+      await refreshAuth();
+
       setShowAuthForm(false);
       navigate("/users");
 
@@ -107,7 +107,7 @@ const executeSwitch = async () => {
   const handleShowForm = () => setShowForm(true);
   const handleSearch = (e) => setSearchQuery(e.target.value.toLowerCase());
   const toggleDropdown = () => setShowDropdown((prev) => !prev);
-  
+
   const filteredClaims = claims.filter((claim) => {
     const matchesFilter = filter === "All" || claim.status === filter;
     const matchesSearch =
@@ -128,7 +128,7 @@ const executeSwitch = async () => {
         <div className="logo"><img src="/assets/logo.svg" alt="Logo" /></div>
         <div className="sidebar-icons"><button>Claims</button></div>
         <div className="sidebar-footer">
-             <button onClick={handleSwitchClick}>Switch to Insurer</button>
+          <button onClick={handleSwitchClick}>Switch to Insurer</button>
         </div>
       </div>
 
@@ -219,11 +219,11 @@ const executeSwitch = async () => {
             <h3>Insurer Authorization</h3>
             <form onSubmit={submitAuthRequest}>
               <label>Authorization ID</label>
-              <input 
-                type="password" 
-                value={authId} 
-                onChange={(e) => setAuthId(e.target.value)} 
-                required 
+              <input
+                type="password"
+                value={authId}
+                onChange={(e) => setAuthId(e.target.value)}
+                required
                 placeholder="Enter admin provided ID"
               />
               {authError && <p className="error-text">{authError}</p>}

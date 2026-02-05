@@ -1,66 +1,163 @@
 /* Center the container */
 .roles-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background-color: hsl(256, 26%, 20%); 
-  }
-  
-  .roles-box {
-    background: white;
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-    text-align: center;
-    width: 350px;
-  }
-  
-  .roles-box h2 {
-    font-family: "DM Serif Display", serif;
-    font-size: 24px;
-    color: hsl(256, 26%, 20%);
-    margin-bottom: 20px;
-  }
-  
-  .roles-box label {
-    font-family: "Karla", sans-serif;
-    font-size: 16px;
-    color: hsl(273, 4%, 51%);
-    display: block;
-    margin-bottom: 10px;
-  }
-  
-  /* Dropdown styling */
-  .roles-box select {
-    width: 100%;
-    padding: 10px;
-    font-size: 16px;
-    border: 1px solid hsl(273, 4%, 51%);
-    border-radius: 5px;
-    margin-bottom: 20px;
-    font-family: "Karla", sans-serif;
-  }
-  
-  .continue-btn {
-    width: 100%;
-    padding: 10px;
-    font-size: 16px;
-    background-color: hsl(256, 26%, 20%);
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-family: "Karla", sans-serif;
-    transition: 0.3s;
-  }
-  
-  .continue-btn:hover {
-    background-color: hsl(270, 9%, 17%);
-  }
-  
-  .continue-btn:disabled {
-    background-color: hsl(273, 4%, 51%);
-    cursor: not-allowed;
-  }
-  
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: hsl(256, 26%, 20%);
+}
+
+.roles-box {
+  background: white;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  width: 350px;
+}
+
+.roles-box h2 {
+  font-family: "DM Serif Display", serif;
+  font-size: 24px;
+  color: hsl(256, 26%, 20%);
+  margin-bottom: 20px;
+}
+
+.roles-box label {
+  font-family: "Karla", sans-serif;
+  font-size: 16px;
+  color: hsl(273, 4%, 51%);
+  display: block;
+  margin-bottom: 10px;
+}
+
+/* Dropdown styling */
+.roles-box select {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid hsl(273, 4%, 51%);
+  border-radius: 5px;
+  margin-bottom: 20px;
+  font-family: "Karla", sans-serif;
+}
+
+.continue-btn {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  background-color: hsl(256, 26%, 20%);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-family: "Karla", sans-serif;
+  transition: 0.3s;
+}
+
+.continue-btn:hover {
+  background-color: hsl(270, 9%, 17%);
+}
+
+.continue-btn:disabled {
+  background-color: hsl(273, 4%, 51%);
+  cursor: not-allowed;
+}
+
+/* --- MODAL STYLES (Matched to PatientDashboard theme) --- */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(160, 151, 151, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(3px);
+}
+
+.modal-content {
+  background: #252a41;
+  padding: 25px;
+  border-radius: 12px;
+  width: 400px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  color: white;
+  text-align: center;
+  font-family: "Karla", sans-serif;
+}
+
+.modal-content h3 {
+  margin-bottom: 20px;
+  color: hsl(270, 24%, 87%);
+  /* Light Purple for dark bg */
+  font-size: 22px;
+  font-family: "DM Serif Display", serif;
+}
+
+/* Form Styles inside Modal */
+.modal-content label {
+  display: block;
+  text-align: left;
+  margin-bottom: 5px;
+  color: hsl(270, 24%, 87%);
+  font-size: 14px;
+}
+
+.modal-content input {
+  width: 100%;
+  padding: 12px;
+  margin: 0 0 20px 0;
+  border-radius: 6px;
+  border: 1px solid #444;
+  background: #1e2235;
+  color: white;
+  font-family: "Karla", sans-serif;
+}
+
+.modal-content input:disabled {
+  background: #151825;
+  color: #888;
+  cursor: not-allowed;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  margin-top: 10px;
+}
+
+.modal-actions button {
+  flex: 1;
+  padding: 12px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.2s;
+  font-family: "Karla", sans-serif;
+}
+
+.cancel-btn {
+  background: transparent;
+  border: 1px solid hsl(270, 24%, 87%);
+  color: hsl(270, 24%, 87%);
+}
+
+.cancel-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.confirm-btn {
+  background: hsl(256, 26%, 60%);
+  /* Brighter purple for action */
+  color: white;
+}
+
+.confirm-btn:hover {
+  background: hsl(256, 26%, 50%);
+}

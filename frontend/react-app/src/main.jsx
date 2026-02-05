@@ -6,11 +6,11 @@ import App from './App';
 const root = createRoot(document.getElementById('root'));
 
 root.render(
-<Auth0Provider
+  <Auth0Provider
     domain="dev-0pgthid6nhe6r5x6.us.auth0.com"
     clientId="g3EJZsncnkpTui74vOKPErLHZzZMVmTu"
     authorizationParams={{
-      redirect_uri: window.location.origin
+      redirect_uri: window.location.origin + "/"
     }}
     cacheLocation="localstorage"
   >

@@ -7,7 +7,7 @@ import "./Roles.css";
 
 const Roles = () => {
   const { isAuthenticated, isLoading, loginWithRedirect, user } = useAuth0();
-  const { refreshAuth, savedRole } = useAuthz(); 
+  const { refreshAuth, savedRole } = useAuthz();
   const navigate = useNavigate();
 
   const [selectedRole, setSelectedRole] = useState("");
@@ -24,14 +24,14 @@ const Roles = () => {
 
   useEffect(() => {
     if (savedRole === "Patient") {
-        navigate("/patient-dashboard");
+      navigate("/patient-dashboard");
     } else if (savedRole === "Insurer") {
-        navigate("/users");
+      navigate("/users");
     }
   }, [savedRole, navigate]);
 
   const checkInsurerAuthorization = async () => {
-    const res = await axios.post("http://localhost:5000/api/insurer/check-authorization", { email: user.email });
+    const res = await axios.post("https://aarogya-qmzf.onrender.com/api/insurer/check-authorization", { email: user.email });
     return res.data.authorized;
   };
 
@@ -41,7 +41,7 @@ const Roles = () => {
 
     if (selectedRole === "Patient") {
       // SAVE PREFERENCE
-      await axios.post("http://localhost:5000/api/user/role", { email: user.email, role: "Patient" });
+      await axios.post("https://aarogya-qmzf.onrender.com/api/user/role", { email: user.email, role: "Patient" });
       await refreshAuth();
       navigate("/patient-dashboard");
       return;
@@ -51,7 +51,7 @@ const Roles = () => {
       try {
         setCheckingAuth(true);
         const authorized = await checkInsurerAuthorization();
-        
+
         if (!authorized) {
           setCheckingAuth(false);
           setShowAuthDialog(true);
@@ -59,11 +59,11 @@ const Roles = () => {
         }
 
         // SAVE PREFERENCE
-        await axios.post("http://localhost:5000/api/user/role", { email: user.email, role: "Insurer" });
-        await refreshAuth(); 
-        
+        await axios.post("https://aarogya-qmzf.onrender.com/api/user/role", { email: user.email, role: "Insurer" });
+        await refreshAuth();
+
         setCheckingAuth(false);
-        navigate("/users"); 
+        navigate("/users");
       } catch {
         setCheckingAuth(false);
         setError("Unable to verify authorization.");
@@ -75,14 +75,14 @@ const Roles = () => {
     e.preventDefault();
     setError("");
     try {
-      await axios.post("http://localhost:5000/api/insurer/request-authorization", {
-          email: user.email, name: user.name, role: "Insurer", authId,
+      await axios.post("https://aarogya-qmzf.onrender.com/api/insurer/request-authorization", {
+        email: user.email, name: user.name, role: "Insurer", authId,
       });
 
       // SAVE PREFERENCE & REFRESH
-      await axios.post("http://localhost:5000/api/user/role", { email: user.email, role: "Insurer" });
-      await refreshAuth(); 
-      
+      await axios.post("https://aarogya-qmzf.onrender.com/api/user/role", { email: user.email, role: "Insurer" });
+      await refreshAuth();
+
       setShowAuthDialog(false);
       setAuthId("");
       navigate("/users");
@@ -112,10 +112,22 @@ const Roles = () => {
             <div className="modal-content">
               <h3>Insurer Authorization Required</h3>
               <form onSubmit={submitAuthorizationRequest}>
-                <label>Email <input type="email" value={user.email} disabled /></label>
-                <label>Authorization ID <input type="password" value={authId} onChange={(e) => setAuthId(e.target.value)} required /></label>
-                <button type="submit">Submit</button>
-                <button type="button" onClick={() => setShowAuthDialog(false)}>Cancel</button>
+                <label>Email</label>
+                <input type="email" value={user.email} disabled />
+
+                <label>Authorization ID</label>
+                <input
+                  type="password"
+                  value={authId}
+                  onChange={(e) => setAuthId(e.target.value)}
+                  required
+                  placeholder="Enter your admin ID"
+                />
+
+                <div className="modal-actions">
+                  <button type="button" className="cancel-btn" onClick={() => setShowAuthDialog(false)}>Cancel</button>
+                  <button type="submit" className="confirm-btn">Confirm</button>
+                </div>
               </form>
             </div>
           </div>
