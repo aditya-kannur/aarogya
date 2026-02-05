@@ -1,13 +1,31 @@
 const express = require("express");
-const Claim = require("../models/claim"); 
+const Claim = require("../models/claim");
 const router = express.Router();
 const InsurerDetails = require("../models/InsurerDetails");
 
 // Get unique User IDs
 router.get("/unique-users", async (req, res) => {
   try {
-    const userIDs = await Claim.distinct("userID");
-    res.status(200).json(userIDs);
+    const users = await Claim.aggregate([
+      {
+        $group: {
+          _id: "$userID",
+          name: { $first: "$name" },
+          email: { $first: "$email" },
+          totalClaims: { $sum: 1 }
+        }
+      },
+      {
+        $project: {
+          userID: "$_id",
+          name: 1,
+          email: 1,
+          totalClaims: 1,
+          _id: 0
+        }
+      }
+    ]);
+    res.status(200).json(users);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error" });
@@ -28,29 +46,29 @@ router.get("/claims/user/:userID", async (req, res) => {
 
 // PUT route to update a claim
 router.put("/claims/:id", async (req, res) => {
-    try {
-      const { status, approvedAmount, insurerComments } = req.body;
-  
-      if (!status || !approvedAmount || !insurerComments) {
-        return res.status(400).json({ message: "All fields are required for updating the claim." });
-      }
-  
-      const updatedClaim = await Claim.findByIdAndUpdate(
-        req.params.id,
-        { status, approvedAmount, insurerComments },
-        { new: true } 
-      );
-  
-      if (!updatedClaim) {
-        return res.status(404).json({ message: "Claim not found." });
-      }
-  
-      res.status(200).json({ message: "Claim updated successfully!", claim: updatedClaim });
-    } catch (error) {
-      console.error("Error updating claim:", error);
-      res.status(500).json({ message: "Server error" });
+  try {
+    const { status, approvedAmount, insurerComments } = req.body;
+
+    if (!status || !approvedAmount || !insurerComments) {
+      return res.status(400).json({ message: "All fields are required for updating the claim." });
     }
-  });
+
+    const updatedClaim = await Claim.findByIdAndUpdate(
+      req.params.id,
+      { status, approvedAmount, insurerComments },
+      { new: true }
+    );
+
+    if (!updatedClaim) {
+      return res.status(404).json({ message: "Claim not found." });
+    }
+
+    res.status(200).json({ message: "Claim updated successfully!", claim: updatedClaim });
+  } catch (error) {
+    console.error("Error updating claim:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
 
 // Request authorization (with authId check)
 router.post("/request-authorization", async (req, res) => {
