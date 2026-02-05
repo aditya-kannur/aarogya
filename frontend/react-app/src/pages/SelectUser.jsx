@@ -80,7 +80,7 @@ const SelectUser = ({ onUserSelect }) => {
             </div>
             {showDropdown && (
               <div className="dropdown-menu">
-                <button onClick={() => logout({ returnTo: window.location.origin })}>
+                <button onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })}>
                   Logout
                 </button>
               </div>
