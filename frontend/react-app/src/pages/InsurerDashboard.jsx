@@ -138,6 +138,10 @@ function InsurerDashboard({ userID }) {
           ))}
         </div>
 
+        <div className="claims-header">
+          <span className="col-no">No</span><span className="col-name">Name</span><span className="col-date">Date</span><span className="col-amount">Amount</span><span className="col-approved">Approved</span><span className="col-status">Status</span>
+        </div>
+
         <div className="claims-section">
           {filteredClaims.length > 0 ? (
             filteredClaims.map((claim, index) => (

@@ -155,7 +155,7 @@ function PatientDashboard() {
           <button className="claims-btn" onClick={handleShowForm}>Add Claim</button>
         </div>
 
-        {showForm && (<div className="claim-form-wrapper"><ClaimForm onClose={() => setShowForm(false)} /></div>)}
+        {showForm && (<div className="claim-form-wrapper"><ClaimForm onClose={() => setShowForm(false)} onSuccess={() => fetchClaims()} /></div>)}
 
         <div className="filters">
           {["All", "Pending", "Approved", "Rejected"].map((status) => (

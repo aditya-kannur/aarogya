@@ -1,0 +1,15 @@
+/* Claims Header */
+.claims-header {
+    display: flex;
+    background: hsl(256, 26%, 20%);
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+    font-weight: bold;
+    justify-content: space-between;
+}
+
+.claims-header span {
+    flex: 1;
+    text-align: center;
+}
