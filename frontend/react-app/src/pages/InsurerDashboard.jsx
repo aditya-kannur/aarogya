@@ -30,7 +30,7 @@ function InsurerDashboard({ userID }) {
     if (!userID) return;
     try {
       const res = await axios.get(
-        `http://localhost:5000/api/insurer/claims/user/${encodeURIComponent(userID)}`,
+        `https://aarogya-qmzf.onrender.com/api/insurer/claims/user/${encodeURIComponent(userID)}`,
         { headers: { "Cache-Control": "no-cache" } }
       );
       setClaims(res.data || []);
@@ -48,7 +48,7 @@ function InsurerDashboard({ userID }) {
 
   const executeSwitch = async () => {
     try {
-      await axios.post("http://localhost:5000/api/user/role", {
+      await axios.post("https://aarogya-qmzf.onrender.com/api/user/role", {
         email: user.email, role: "Patient"
       });
       navigate("/patient-dashboard");
@@ -136,6 +136,10 @@ function InsurerDashboard({ userID }) {
               {status}
             </button>
           ))}
+        </div>
+
+        <div className="claims-header">
+          <span className="col-no">No</span><span className="col-name">Name</span><span className="col-date">Date</span><span className="col-amount">Amount</span><span className="col-approved">Approved</span><span className="col-status">Status</span>
         </div>
 
         <div className="claims-section">

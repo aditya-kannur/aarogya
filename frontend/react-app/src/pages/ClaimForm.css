@@ -1,110 +1,244 @@
+/* Dark Theme Modal Overlay */
 .modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5); 
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000; 
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(160, 151, 151, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(5px);
+}
 
-  }
-  
-  .modal-content {
-    background: white;
-    padding: 20px;
-    width: 600px;
-    max-height: 70vh;
-    border-radius: 8px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-    overflow-y: auto;
-  }
-  
-  .modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid hsl(273, 4%, 51%);
-    padding-bottom: 10px;
-    margin-bottom: 15px;
-  }
-  
-  .modal-header h2 {
-    margin: 0;
-    font-size: 20px;
-    color: hsl(256, 26%, 20%);
-  }
-  
-  .close-btn {
-    background: none;
-    border: none;
-    font-size: 24px;
-    font-weight: bold;
-    cursor: pointer;
-    color: hsl(273, 4%, 51%);
-  }
-  
-  .close-btn:hover {
-    color: hsl(256, 26%, 20%);
+/* Modal Content Card - Increased Specificity */
+.modal-content.claim-modal {
+  background: #252a41;
+  padding: 30px;
+  width: 650px;
+  max-height: 85vh;
+  border-radius: 12px;
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.3);
+  text-align: left;
+  position: relative;
+  overflow-y: auto;
+  color: white;
+  font-family: "Karla", sans-serif;
+  animation: fadeIn 0.3s ease-in-out;
+  scrollbar-width: none;
+}
+
+.modal-content.claim-modal::-webkit-scrollbar {
+  display: none;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
   }
 
-  form{
-    display: flex;
-    flex-direction: column;
-    margin-right: 20px;
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
-  
-  .form-group {
-    text-align: left;
-    margin-bottom: 15px;
-  }
-  
-  .form-group label {
-    display: block;
-    font-weight: bold;
-    margin-bottom: 5px;
-    color: hsl(256, 26%, 20%);
-  }
-  
-  .form-group input,
-  .form-group textarea {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid hsl(273, 4%, 51%);
-    border-radius: 5px;
-    font-size: 16px;
-    font-family: "Karla", sans-serif;
-  }
-  
-  .form-group textarea {
-    height: 80px;
-    resize: none;
-  }
-  
-  .submit-btn {
-    width: 100%;
-    padding: 12px;
-    font-size: 16px;
-    background-color: hsl(256, 26%, 20%);
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-family: "Karla", sans-serif;
-    transition: background-color 0.3s ease;
-  }
-  
-  .submit-btn:hover {
-    background-color: hsl(270, 9%, 17%);
-  }
-  
-  .error {
-    color: red;
-    font-size: 14px;
-  }
-  
+}
+
+/* Header */
+.claim-modal .modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 15px;
+  margin-bottom: 20px;
+}
+
+.claim-modal .modal-header h2 {
+  margin: 0;
+  font-size: 24px;
+  color: white;
+  font-family: "DM Serif Display", serif;
+}
+
+.claim-modal .close-btn {
+  background: none;
+  border: none;
+  font-size: 36px;
+  font-weight: bold;
+  cursor: pointer;
+  color: white !important;
+  /* Force visibility */
+  opacity: 1;
+  transition: transform 0.2s;
+  line-height: 1;
+  z-index: 10;
+}
+
+.claim-modal .close-btn:hover {
+  transform: scale(1.1);
+}
+
+/* Form Groups */
+.claim-modal .form-group {
+  margin-bottom: 20px;
+  width: 80%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.claim-modal .form-group label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 14px;
+}
+
+.claim-modal .form-group input,
+.claim-modal .form-group textarea {
+  width: 100%;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  font-size: 16px;
+  color: white;
+  font-family: "Karla", sans-serif;
+  transition: border-color 0.2s;
+}
+
+.claim-modal .form-group input:focus,
+.claim-modal .form-group textarea:focus {
+  outline: none;
+  border-color: hsl(256, 26%, 60%);
+}
+
+.claim-modal .form-group textarea {
+  height: 100px;
+  resize: vertical;
+}
+
+/* File Upload */
+.claim-modal .file-upload-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.claim-modal .file-upload-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 15px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px dashed rgba(255, 255, 255, 0.3);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 14px;
+}
+
+.claim-modal .file-upload-label:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.6);
+}
+
+.claim-modal .file-upload-label i {
+  margin-right: 8px;
+}
+
+.claim-modal input[type="file"] {
+  display: none;
+}
+
+/* Submit Button */
+.claim-modal .submit-btn {
+  width: 80%;
+  padding: 14px;
+  font-size: 16px;
+  font-weight: bold;
+  background: linear-gradient(135deg, hsl(256, 26%, 40%) 0%, hsl(256, 26%, 60%) 100%);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: transform 0.1s, box-shadow 0.2s;
+  margin-top: 10px;
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+}
+
+.claim-modal .submit-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.claim-modal .submit-btn:active {
+  transform: translateY(0);
+}
+
+.claim-modal .submit-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* Error Message - Specificity increased to override .modal-content p */
+.claim-modal .error {
+  color: #fff !important;
+  /* Force white */
+  font-size: 12px;
+  margin-top: 5px;
+  display: block;
+}
+
+/* Success State styling */
+.success-content {
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.success-icon-container {
+  width: 80px;
+  height: 80px;
+  background: rgba(76, 175, 80, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+}
+
+.success-icon {
+  color: #4caf50;
+  font-size: 40px;
+}
+
+.success-content h2 {
+  color: white;
+  font-family: "DM Serif Display", serif;
+  margin-bottom: 15px;
+}
+
+.success-content p {
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 30px;
+}
+
+.success-close-btn {
+  background: white;
+  color: #252a41;
+  font-weight: bold;
+  padding: 12px 30px;
+  border-radius: 25px;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.success-close-btn:hover {
+  transform: scale(1.05);
+}

@@ -47,15 +47,16 @@ router.get("/claims/user/:userID", async (req, res) => {
 // PUT route to update a claim
 router.put("/claims/:id", async (req, res) => {
   try {
-    const { status, approvedAmount, insurerComments } = req.body;
+    const { name, email, amount, description, status, approvedAmount, insurerComments } = req.body;
 
-    if (!status || !approvedAmount || !insurerComments) {
-      return res.status(400).json({ message: "All fields are required for updating the claim." });
-    }
+    // Use a flexible update object
+    const updateData = {
+      name, email, amount, description, status, approvedAmount, insurerComments
+    };
 
     const updatedClaim = await Claim.findByIdAndUpdate(
       req.params.id,
-      { status, approvedAmount, insurerComments },
+      updateData,
       { new: true }
     );
 
