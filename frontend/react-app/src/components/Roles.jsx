@@ -41,16 +41,16 @@ const Roles = () => {
     setError("");
     if (!selectedRole || !user) return;
 
-    if (selectedRole === "Patient") {
-      // SAVE PREFERENCE
-      await axios.post("https://aarogya-qmzf.onrender.com/api/user/role", { email: user.email, role: "Patient" });
-      await refreshAuth();
-      navigate("/patient-dashboard");
-      return;
-    }
+    try {
+      if (selectedRole === "Patient") {
+        // SAVE PREFERENCE
+        await axios.post("https://aarogya-qmzf.onrender.com/api/user/role", { email: user.email, role: "Patient" });
+        await refreshAuth();
+        navigate("/patient-dashboard");
+        return;
+      }
 
-    if (selectedRole === "Insurer") {
-      try {
+      if (selectedRole === "Insurer") {
         setCheckingAuth(true);
         const authorized = await checkInsurerAuthorization();
 
@@ -66,10 +66,11 @@ const Roles = () => {
 
         setCheckingAuth(false);
         navigate("/users");
-      } catch {
-        setCheckingAuth(false);
-        setError("Unable to verify authorization.");
       }
+    } catch (err) {
+      console.error("Error in role selection:", err);
+      setError("An error occurred connecting to the server. Please try again.");
+      setCheckingAuth(false);
     }
   };
 

@@ -10,7 +10,12 @@ const userPreferenceRoutes = require("./routes/userPreferenceRoutes"); // <--- I
 
 const app = express();
 app.use(cors({
-  origin: ["https://aarogya-lemon.vercel.app", "http://localhost:5173", "http://localhost:3000"],
+  origin: [
+    "https://aarogya-lemon.vercel.app",
+    "https://www.aarogya-lemon.vercel.app",
+    "http://localhost:5173",
+    "http://localhost:3000"
+  ],
   credentials: true
 }));
 app.use(express.json());
@@ -31,6 +36,6 @@ app.get("/", (req, res) => {
 });
 
 const PORT = process.env.PORT || 8080;
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`Server running on port ${PORT}`);
 });

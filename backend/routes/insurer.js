@@ -1,7 +1,7 @@
 const express = require("express");
 const Claim = require("../models/claim");
 const router = express.Router();
-const InsurerDetails = require("../models/InsurerDetails");
+const InsurerDetails = require("../models/insurerDetails");
 
 // Get unique User IDs
 router.get("/unique-users", async (req, res) => {
@@ -92,7 +92,11 @@ router.post("/request-authorization", async (req, res) => {
 // Check if user is authorized
 router.post("/check-authorization", async (req, res) => {
   const { email } = req.body;
-  const exists = await InsurerDetails.findOne({ email });
+  if (!email) return res.json({ authorized: false });
+
+  const exists = await InsurerDetails.findOne({
+    email: { $regex: new RegExp(`^${email}$`, 'i') }
+  });
   res.json({ authorized: !!exists });
 });
 

@@ -5,9 +5,12 @@ const UserPreference = require("../models/UserPreference");
 // Fetch saved role for a user
 router.get("/role/:email", async (req, res) => {
   try {
-    const pref = await UserPreference.findOne({ email: req.params.email });
+    const pref = await UserPreference.findOne({
+      email: { $regex: new RegExp(`^${req.params.email}$`, 'i') }
+    });
     res.json({ lastRole: pref ? pref.lastRole : "" });
   } catch (err) {
+    console.error("Fetch role error:", err);
     res.status(500).json({ error: "Failed to fetch role" });
   }
 });
@@ -17,9 +20,9 @@ router.post("/role", async (req, res) => {
   const { email, role } = req.body;
   try {
     await UserPreference.findOneAndUpdate(
-      { email }, 
-      { lastRole: role }, 
-      { upsert: true, new: true } 
+      { email },
+      { lastRole: role },
+      { upsert: true, new: true }
     );
     res.json({ success: true });
   } catch (err) {
